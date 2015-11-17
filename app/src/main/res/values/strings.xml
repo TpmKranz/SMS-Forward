@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">SMS Forward</string>
+    <string name="action_settings">Settings</string>
+    <string name="hint_email">Email address</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_server">SMTP Server</string>
+    <string name="hint_port">Port</string>
+    <string name="hint_target">Target address</string>
+    <string name="hint_pubkey">Public PGP key</string>
+    <string name="intro">Here you can set the email account to be used for sending SMS contents.\nThe button starts the service that catches SMS and forwards them via the specified email account.</string>
+    <string name="service_notification_ticker">Forwarding SMS via Email</string>
+    <string name="email_body_template" formatted="false">SMS from %s:%n%n%s</string>
+    <string name="email_subject_template" formatted="false">%d new SMS</string>
+    <string name="email_subject_test">SMS Forward Test Mail</string>
+    <string name="email_body_test">If you see this mail, your settings are set correctly and your SMS should be forwarded properly to this mail address.</string>
+</resources>
