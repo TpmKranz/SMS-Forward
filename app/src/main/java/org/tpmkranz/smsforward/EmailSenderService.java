@@ -8,10 +8,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.IBinder;
-import android.text.LoginFilter;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -69,7 +68,7 @@ public class EmailSenderService extends Service {
             String notificationText = mContext.getResources().getString(R.string.service_notification_ticker);
             String notificationLabel = mContext.getResources().getString(R.string.app_name);
             mNotificationId = R.string.app_name + mNotificationOffset++;
-            notification = new Notification.Builder(mContext)
+            notification = new NotificationCompat.Builder(mContext)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker(notificationText)
                 .setWhen(System.currentTimeMillis())
