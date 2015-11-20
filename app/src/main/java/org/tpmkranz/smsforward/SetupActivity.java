@@ -8,14 +8,24 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.security.Security;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class SetupActivity extends AppCompatActivity {
@@ -32,6 +42,7 @@ public class SetupActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private EditText inputEmail, inputPassword, inputServer, inputPort, inputTarget, inputPubkey;
     private SharedPreferences settings;
+    private HashMap<String,String> currentSettings;
 
 
     static {
@@ -52,11 +63,18 @@ public class SetupActivity extends AppCompatActivity {
         inputTarget = (EditText) findViewById(R.id.input_target);
         inputPubkey = (EditText) findViewById(R.id.input_pubkey);
         settings = this.getSharedPreferences(SHAREDPREFSNAME, Context.MODE_PRIVATE);
-        inputEmail.setText(settings.getString(SHAREDPREFSEMAIL, ""));
-        inputServer.setText(settings.getString(SHAREDPREFSSERVER, ""));
-        inputPort.setText(settings.getString(SHAREDPREFSPORT, ""));
-        inputTarget.setText(settings.getString(SHAREDPREFSTARGET, ""));
-        inputPubkey.setText(settings.getString(SHAREDPREFSPUBKEY, ""));
+        currentSettings = new HashMap<>();
+        readSettings(true);
+        inputEmail.setText(currentSettings.get(SHAREDPREFSEMAIL));
+        inputEmail.addTextChangedListener(new ClearErrorOnInputListener(inputEmail));
+        inputServer.setText(currentSettings.get(SHAREDPREFSSERVER));
+        inputServer.addTextChangedListener(new ClearErrorOnInputListener(inputServer));
+        inputPort.setText(currentSettings.get(SHAREDPREFSPORT));
+        inputPort.addTextChangedListener(new ClearErrorOnInputListener(inputPort));
+        inputTarget.setText(currentSettings.get(SHAREDPREFSTARGET));
+        inputTarget.addTextChangedListener(new ClearErrorOnInputListener(inputTarget));
+        inputPubkey.setText(currentSettings.get(SHAREDPREFSPUBKEY));
+        inputPubkey.addTextChangedListener(new ClearErrorOnInputListener(inputPubkey));
         receiver = new ComponentName(this, SMSListener.class);
         pm = getPackageManager();
     }
@@ -70,24 +88,47 @@ public class SetupActivity extends AppCompatActivity {
         switchUIStates(enabled);
     }
 
-    private boolean haveSettingsChanged(){
-        return !getInputText(inputEmail).equals(settings.getString(SHAREDPREFSEMAIL, ""))
-                || (!getInputText(inputPassword).equals(settings.getString(SHAREDPREFSPASSWORD, ""))
-                && !getInputText(inputPassword).equals(""))
-                || !getInputText(inputServer).equals(settings.getString(SHAREDPREFSSERVER, ""))
-                || !getInputText(inputPort).equals(settings.getString(SHAREDPREFSPORT, ""))
-                || !getInputText(inputTarget).equals(settings.getString(SHAREDPREFSTARGET, ""))
-                || !getInputText(inputPubkey).equals(settings.getString(SHAREDPREFSPUBKEY, ""));
+    private void readSettings(boolean fromPrefs){
+        currentSettings.put(SHAREDPREFSEMAIL, fromPrefs ? settings.getString(SHAREDPREFSEMAIL, "") : inputEmail.getText().toString());
+        currentSettings.put(SHAREDPREFSPASSWORD, fromPrefs || inputPassword.getText().toString().isEmpty() ? settings.getString(SHAREDPREFSPASSWORD, "") : inputPassword.getText().toString());
+        currentSettings.put(SHAREDPREFSSERVER, fromPrefs ? settings.getString(SHAREDPREFSSERVER, "") : inputServer.getText().toString());
+        currentSettings.put(SHAREDPREFSPORT, fromPrefs ? settings.getString(SHAREDPREFSPORT, "") : inputPort.getText().toString());
+        currentSettings.put(SHAREDPREFSTARGET, fromPrefs ? settings.getString(SHAREDPREFSTARGET, "") : inputTarget.getText().toString());
+        currentSettings.put(SHAREDPREFSPUBKEY, fromPrefs ? settings.getString(SHAREDPREFSPUBKEY, "") : inputPubkey.getText().toString());
     }
 
-    private boolean areSettingsValid(){
-        return getInputText(inputEmail).contains("@")
-                && !(getInputText(inputPassword).isEmpty() && settings.getString(SHAREDPREFSPASSWORD, "").isEmpty())
-                && getInputText(inputServer).contains(".")
-                && !getInputText(inputPort).isEmpty()
-                && getInputText(inputTarget).contains("@")
-                && (getInputText(inputPubkey).contains("-----BEGIN PGP PUBLIC KEY BLOCK-----")
-                    || getInputText(inputPubkey).isEmpty());
+    private boolean haveSettingsChanged(){
+        return !getInputText(inputEmail).equals(currentSettings.get(SHAREDPREFSEMAIL))
+                || (!getInputText(inputPassword).equals(currentSettings.get(SHAREDPREFSPASSWORD))
+                && !getInputText(inputPassword).equals(""))
+                || !getInputText(inputServer).equals(currentSettings.get(SHAREDPREFSSERVER))
+                || !getInputText(inputPort).equals(currentSettings.get(SHAREDPREFSPORT))
+                || !getInputText(inputTarget).equals(currentSettings.get(SHAREDPREFSTARGET))
+                || !getInputText(inputPubkey).equals(currentSettings.get(SHAREDPREFSPUBKEY));
+    }
+
+    private List<EditText> invalidSettings(){
+        ArrayList<EditText> invalidSettings = new ArrayList<EditText>();
+        ((TextInputLayout)inputEmail.getParent()).setError(null);
+        ((TextInputLayout)inputPassword.getParent()).setError(null);
+        ((TextInputLayout)inputServer.getParent()).setError(null);
+        ((TextInputLayout)inputPort.getParent()).setError(null);
+        ((TextInputLayout)inputTarget.getParent()).setError(null);
+        ((TextInputLayout)inputPubkey.getParent()).setError(null);
+        if (!getInputText(inputEmail).contains("@"))
+            invalidSettings.add(inputEmail);
+        if (getInputText(inputPassword).isEmpty() && currentSettings.get(SHAREDPREFSPASSWORD).isEmpty())
+            invalidSettings.add(inputPassword);
+        if (!getInputText(inputServer).contains("."))
+            invalidSettings.add(inputServer);
+        if (getInputText(inputPort).isEmpty())
+            invalidSettings.add(inputPort);
+        if (!getInputText(inputTarget).contains("@"))
+            invalidSettings.add(inputTarget);
+        if (!(getInputText(inputPubkey).contains("-----BEGIN PGP PUBLIC KEY BLOCK-----")
+                    || getInputText(inputPubkey).isEmpty()))
+            invalidSettings.add(inputPubkey);
+        return invalidSettings;
     }
 
     private boolean isListenerListening(ComponentName listener){
@@ -132,17 +173,37 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     public void enableBroadcastReceiver(View view) {
-        if (areSettingsValid()) {
+        List<EditText> invalidSettings = invalidSettings();
+        if (invalidSettings.isEmpty()) {
             if (haveSettingsChanged()) {
-                askUserToTestSettings();
-                // TODO write only on successful testing
                 writeSettings();
+                askUserToTestSettings();
+            }else{
+                pm.setComponentEnabledSetting(receiver,
+                        (enabled ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED : PackageManager.COMPONENT_ENABLED_STATE_ENABLED),
+                        PackageManager.DONT_KILL_APP);
             }
-            pm.setComponentEnabledSetting(receiver,
-                    (enabled ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED : PackageManager.COMPONENT_ENABLED_STATE_ENABLED),
-                    PackageManager.DONT_KILL_APP);
             enabled = isListenerListening(receiver);
             switchUIStates(enabled);
+        }else{
+            for (EditText settingInput: invalidSettings){
+                String errorMessage;
+                if (settingInput.equals(inputEmail))
+                    errorMessage = getResources().getString(R.string.invalid_email);
+                else if (settingInput.equals(inputPassword))
+                    errorMessage = getResources().getString(R.string.invalid_password);
+                else if (settingInput.equals(inputServer))
+                    errorMessage = getResources().getString(R.string.invalid_server);
+                else if (settingInput.equals(inputPort))
+                    errorMessage = getResources().getString(R.string.invalid_port);
+                else if (settingInput.equals(inputTarget))
+                    errorMessage = getResources().getString(R.string.invalid_email);
+                else if (settingInput.equals(inputPubkey))
+                    errorMessage = getResources().getString(R.string.invalid_pubkey);
+                else
+                    errorMessage = getResources().getString(R.string.invalid_something);
+                ((TextInputLayout)settingInput.getParent()).setError(errorMessage);
+            }
         }
     }
 
@@ -156,12 +217,54 @@ public class SetupActivity extends AppCompatActivity {
         editor.putString(SHAREDPREFSTARGET, getInputText(inputTarget));
         editor.putString(SHAREDPREFSPUBKEY, getInputText(inputPubkey));
         editor.apply();
+        readSettings(false);
     }
 
     private void askUserToTestSettings() {
+        Snackbar
+                .make(findViewById(R.id.setup_layout), R.string.snackbar_settings_changed, Snackbar.LENGTH_INDEFINITE)
+                .setAction(R.string.snackbar_settings_confirmed, new SnackBarSettingsConfirmationListener())
+                .show();
         Intent testMailIntent = new Intent(this, EmailSenderService.class);
         testMailIntent.putExtra(EmailSenderService.INTENTEXTRASUBJECT, getResources().getString(R.string.email_subject_test));
         testMailIntent.putExtra(EmailSenderService.INTENTEXTRABODY, getResources().getString(R.string.email_body_test));
         startService(testMailIntent);
+    }
+
+    public void expandIntro(View view) {
+        TextView intro = (TextView) view;
+        boolean isSingleLine = intro.getLineCount() == 1;
+        String introHint = getResources().getString(isSingleLine ? R.string.hint_intro1 : R.string.hint_intro0);
+        ((TextInputLayout) intro.getParent()).setHint(introHint);
+        intro.setEllipsize(isSingleLine ? null : TextUtils.TruncateAt.END);
+        intro.setSingleLine(!isSingleLine);
+    }
+
+    private class ClearErrorOnInputListener implements TextWatcher{
+
+        TextInputLayout wrapper;
+
+        public ClearErrorOnInputListener(EditText input){
+            wrapper = (TextInputLayout) input.getParent();
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            wrapper.setError(null);
+        }
+    }
+
+    private class SnackBarSettingsConfirmationListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            enableBroadcastReceiver(v);
+        }
     }
 }
