@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_setup" tools:context=".SetupActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:orientation="vertical" >
-        <TextView
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="10pt"
-            android:textStyle="italic"
-            android:text="@string/intro"
-            android:singleLine="true"
-            android:onClick="expandIntro"/>
+            android:hint="@string/hint_intro1">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:textSize="10pt"
+                android:textStyle="italic"
+                android:text="@string/intro"
+                android:scrollHorizontally="true"
+                android:editable="false"
+                android:background="@android:color/transparent"
+                android:textColor="@android:color/tertiary_text_light"
+                android:textColorHighlight="@android:color/tertiary_text_light"
+                android:onClick="expandIntro"/>
+        </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,4 +107,4 @@
                 android:layout_height="wrap_content"/>
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+</ScrollView>

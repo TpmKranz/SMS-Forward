@@ -7,12 +7,20 @@
     <string name="hint_port">Port*</string>
     <string name="hint_target">Target address*</string>
     <string name="hint_pubkey">Public PGP key</string>
-    <string name="intro">Here you can set the email account to be used for sending SMS contents.\nThe button starts the receiver that catches SMS and forwards them via the specified email account.\nIf you\'ve changed settings along the way, a test mail will be sent and you\'ll be asked to confirm its receipt to really start the receiver.</string>
+    <string name="intro">Here you can set up the email account to be used for sending SMS contents.\nThe button starts the receiver that catches and forwards SMS via email.\nIf you\'ve changed settings along the way, a test mail will be sent and you\'ll be asked to confirm its receipt to really start the receiver.</string>
     <string name="service_notification_ticker">Forwarding SMS via Email</string>
     <string name="snackbar_settings_changed">Confirm that you\'ve received the test mail</string>
-    <string name="snackbar_settings_confirmed">Start</string>
+    <string name="snackbar_settings_confirmed">Confirm</string>
     <string name="email_body_template" formatted="false">SMS from %s:%n%n%s</string>
     <string name="email_subject_template" formatted="false">%d new SMS</string>
     <string name="email_subject_test">SMS Forward Test Mail</string>
-    <string name="email_body_test">If you see this mail, your settings are set correctly and your SMS should be forwarded properly to this mail address.</string>
+    <string name="email_body_test">If you see this mail, your settings are set correctly and your SMS should be forwarded properly to this mail address once you\'ve confirmed the receipt of this mail on your device.</string>
+    <string name="invalid_email">Not a valid email address</string>
+    <string name="invalid_password">No password stored or set here</string>
+    <string name="invalid_server">Not a valid fully qualified domain name</string>
+    <string name="invalid_port">Not a valid port</string>
+    <string name="invalid_pubkey">Not a valid PGP pubkey</string>
+    <string name="invalid_something">Not a valid input</string>
+    <string name="hint_intro0">Tap to expand explanation</string>
+    <string name="hint_intro1">Tap to collapse explanation</string>
 </resources>

@@ -9,16 +9,23 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.security.Security;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class SetupActivity extends AppCompatActivity {
@@ -59,10 +66,15 @@ public class SetupActivity extends AppCompatActivity {
         currentSettings = new HashMap<>();
         readSettings(true);
         inputEmail.setText(currentSettings.get(SHAREDPREFSEMAIL));
+        inputEmail.addTextChangedListener(new ClearErrorOnInputListener(inputEmail));
         inputServer.setText(currentSettings.get(SHAREDPREFSSERVER));
+        inputServer.addTextChangedListener(new ClearErrorOnInputListener(inputServer));
         inputPort.setText(currentSettings.get(SHAREDPREFSPORT));
+        inputPort.addTextChangedListener(new ClearErrorOnInputListener(inputPort));
         inputTarget.setText(currentSettings.get(SHAREDPREFSTARGET));
+        inputTarget.addTextChangedListener(new ClearErrorOnInputListener(inputTarget));
         inputPubkey.setText(currentSettings.get(SHAREDPREFSPUBKEY));
+        inputPubkey.addTextChangedListener(new ClearErrorOnInputListener(inputPubkey));
         receiver = new ComponentName(this, SMSListener.class);
         pm = getPackageManager();
     }
@@ -95,14 +107,28 @@ public class SetupActivity extends AppCompatActivity {
                 || !getInputText(inputPubkey).equals(currentSettings.get(SHAREDPREFSPUBKEY));
     }
 
-    private boolean areSettingsValid(){
-        return getInputText(inputEmail).contains("@")
-                && !(getInputText(inputPassword).isEmpty() && settings.getString(SHAREDPREFSPASSWORD, "").isEmpty())
-                && getInputText(inputServer).contains(".")
-                && !getInputText(inputPort).isEmpty()
-                && getInputText(inputTarget).contains("@")
-                && (getInputText(inputPubkey).contains("-----BEGIN PGP PUBLIC KEY BLOCK-----")
-                    || getInputText(inputPubkey).isEmpty());
+    private List<EditText> invalidSettings(){
+        ArrayList<EditText> invalidSettings = new ArrayList<EditText>();
+        ((TextInputLayout)inputEmail.getParent()).setError(null);
+        ((TextInputLayout)inputPassword.getParent()).setError(null);
+        ((TextInputLayout)inputServer.getParent()).setError(null);
+        ((TextInputLayout)inputPort.getParent()).setError(null);
+        ((TextInputLayout)inputTarget.getParent()).setError(null);
+        ((TextInputLayout)inputPubkey.getParent()).setError(null);
+        if (!getInputText(inputEmail).contains("@"))
+            invalidSettings.add(inputEmail);
+        if (getInputText(inputPassword).isEmpty() && currentSettings.get(SHAREDPREFSPASSWORD).isEmpty())
+            invalidSettings.add(inputPassword);
+        if (!getInputText(inputServer).contains("."))
+            invalidSettings.add(inputServer);
+        if (getInputText(inputPort).isEmpty())
+            invalidSettings.add(inputPort);
+        if (!getInputText(inputTarget).contains("@"))
+            invalidSettings.add(inputTarget);
+        if (!(getInputText(inputPubkey).contains("-----BEGIN PGP PUBLIC KEY BLOCK-----")
+                    || getInputText(inputPubkey).isEmpty()))
+            invalidSettings.add(inputPubkey);
+        return invalidSettings;
     }
 
     private boolean isListenerListening(ComponentName listener){
@@ -147,7 +173,8 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     public void enableBroadcastReceiver(View view) {
-        if (areSettingsValid()) {
+        List<EditText> invalidSettings = invalidSettings();
+        if (invalidSettings.isEmpty()) {
             if (haveSettingsChanged()) {
                 writeSettings();
                 askUserToTestSettings();
@@ -158,6 +185,25 @@ public class SetupActivity extends AppCompatActivity {
             }
             enabled = isListenerListening(receiver);
             switchUIStates(enabled);
+        }else{
+            for (EditText settingInput: invalidSettings){
+                String errorMessage;
+                if (settingInput.equals(inputEmail))
+                    errorMessage = getResources().getString(R.string.invalid_email);
+                else if (settingInput.equals(inputPassword))
+                    errorMessage = getResources().getString(R.string.invalid_password);
+                else if (settingInput.equals(inputServer))
+                    errorMessage = getResources().getString(R.string.invalid_server);
+                else if (settingInput.equals(inputPort))
+                    errorMessage = getResources().getString(R.string.invalid_port);
+                else if (settingInput.equals(inputTarget))
+                    errorMessage = getResources().getString(R.string.invalid_email);
+                else if (settingInput.equals(inputPubkey))
+                    errorMessage = getResources().getString(R.string.invalid_pubkey);
+                else
+                    errorMessage = getResources().getString(R.string.invalid_something);
+                ((TextInputLayout)settingInput.getParent()).setError(errorMessage);
+            }
         }
     }
 
@@ -187,7 +233,31 @@ public class SetupActivity extends AppCompatActivity {
 
     public void expandIntro(View view) {
         TextView intro = (TextView) view;
-        intro.setSingleLine(intro.getMaxLines() != 1);
+        boolean isSingleLine = intro.getLineCount() == 1;
+        String introHint = getResources().getString(isSingleLine ? R.string.hint_intro1 : R.string.hint_intro0);
+        ((TextInputLayout) intro.getParent()).setHint(introHint);
+        intro.setEllipsize(isSingleLine ? null : TextUtils.TruncateAt.END);
+        intro.setSingleLine(!isSingleLine);
+    }
+
+    private class ClearErrorOnInputListener implements TextWatcher{
+
+        TextInputLayout wrapper;
+
+        public ClearErrorOnInputListener(EditText input){
+            wrapper = (TextInputLayout) input.getParent();
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            wrapper.setError(null);
+        }
     }
 
     private class SnackBarSettingsConfirmationListener implements View.OnClickListener{
