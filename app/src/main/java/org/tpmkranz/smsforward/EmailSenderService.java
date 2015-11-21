@@ -14,7 +14,6 @@ import android.util.Log;
 import java.util.Properties;
 
 import javax.mail.Message;
-import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -25,8 +24,9 @@ public class EmailSenderService extends Service {
     Service mContext;
     SharedPreferences settings;
     int mNotificationOffset;
-    public static String INTENTEXTRABODY = "emailBody";
-    public static String INTENTEXTRASUBJECT = "emailSubject";
+    protected static String LOGCATTAG = "EmailSenderService";
+    protected static String INTENTEXTRABODY = "emailBody";
+    protected static String INTENTEXTRASUBJECT = "emailSubject";
 
     public EmailSenderService() {
     }
@@ -107,10 +107,16 @@ public class EmailSenderService extends Service {
                 message.setFrom(new InternetAddress(username));
                 message.setRecipient(Message.RecipientType.TO, InternetAddress.parse(target)[0]);
                 message.setSubject(params[0]);
-                message.setText(params[1]);
+                String text = params[1]+"\n";
+                PGPPubkeyEncryptionUtil encrypter = new PGPPubkeyEncryptionUtil(settings.getString(SetupActivity.SHAREDPREFSPUBKEY, ""));
+                if (encrypter.hasKey())
+                    text = encrypter.encrypt(text);
+                else
+                    encrypter = null;
+                message.setText(text);
                 Transport.send(message);
-            }catch (MessagingException e){
-                Log.e(mContext.getResources().getString(R.string.app_name), e.toString());
+            }catch (Exception e){
+                Log.e(LOGCATTAG, e.toString());
                 return false;
             }
             return true;
