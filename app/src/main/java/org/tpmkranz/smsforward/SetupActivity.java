@@ -15,11 +15,11 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.security.Security;
@@ -29,6 +29,7 @@ import java.util.List;
 
 
 public class SetupActivity extends AppCompatActivity {
+    protected static String LOGCATTAG = "SetupActivity";
     protected static String SHAREDPREFSNAME = "org.tpmkranz.smsforward.SETTINGS";
     protected static String SHAREDPREFSEMAIL = "email";
     protected static String SHAREDPREFSPASSWORD = "pass";
@@ -43,6 +44,7 @@ public class SetupActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword, inputServer, inputPort, inputTarget, inputPubkey;
     private SharedPreferences settings;
     private HashMap<String,String> currentSettings;
+    private PGPPubkeyEncryptionUtil encrypter;
 
 
     static {
@@ -125,9 +127,24 @@ public class SetupActivity extends AppCompatActivity {
             invalidSettings.add(inputPort);
         if (!getInputText(inputTarget).contains("@"))
             invalidSettings.add(inputTarget);
-        if (!(getInputText(inputPubkey).contains("-----BEGIN PGP PUBLIC KEY BLOCK-----")
-                    || getInputText(inputPubkey).isEmpty()))
-            invalidSettings.add(inputPubkey);
+        if (!getInputText(inputPubkey).isEmpty()){
+            encrypter = new PGPPubkeyEncryptionUtil(getInputText(inputPubkey));
+            if (!encrypter.hasKey()) {
+                encrypter = null;
+                invalidSettings.add(inputPubkey);
+            }else{
+                String testEncryption = null;
+                try{
+                    testEncryption = encrypter.encrypt("Test");
+                }catch (Exception e){
+                    Log.e(LOGCATTAG, e.toString());
+                    encrypter = null;
+                    invalidSettings.add(inputPubkey);
+                }
+                if (testEncryption == null)
+                    invalidSettings.add(inputPubkey);
+            }
+        }
         return invalidSettings;
     }
 
