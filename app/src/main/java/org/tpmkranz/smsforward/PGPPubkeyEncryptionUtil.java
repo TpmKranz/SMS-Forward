@@ -66,6 +66,7 @@ public class PGPPubkeyEncryptionUtil {
 
     public String encrypt(String plainText) throws NoSuchAlgorithmException, IOException, PGPException {
         byte[] rawText = plainText.getBytes();
+        //This needs, like, three metric fucktons of explanation and/or cleaning up
         ByteArrayOutputStream encOut = new ByteArrayOutputStream();
         OutputStream out = new ArmoredOutputStream(encOut);
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
