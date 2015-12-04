@@ -1,27 +1,18 @@
 package org.tpmkranz.smsforward;
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +22,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import com.wnafee.vector.compat.ResourcesCompat;
-import com.wnafee.vector.compat.VectorDrawable;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class JavaxMailProperties extends AppCompatActivity implements JavaxMailPropertyDialog.JavaxMailPropertyDialogInterface {
+public class JavaMailProperties extends AppCompatActivity implements JavaMailPropertyDialog.JavaxMailPropertyDialogInterface {
 
     private RecyclerView propertyRecycler;
     private JavaxMailPropertyAdapter propertyAdapter;
@@ -47,7 +36,7 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_javax_mail_properties);
+        setContentView(R.layout.activity_javamail_properties);
         Toolbar toolbar = (Toolbar) findViewById(R.id.javax_mail_properties_toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -80,43 +69,45 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
         propertyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                DialogFragment propertyDialog = new JavaxMailPropertyDialog();
+                DialogFragment propertyDialog = new JavaMailPropertyDialog();
                 Bundle arguments = new Bundle();
-                arguments.putInt(JavaxMailPropertyDialog.ARG_MODE, JavaxMailPropertyDialog.MODE_EDIT);
-                arguments.putInt(JavaxMailPropertyDialog.ARG_IX, position);
-                arguments.putString(JavaxMailPropertyDialog.ARG_KEY, propertyAdapter.propsKeys.get(position));
-                arguments.putString(JavaxMailPropertyDialog.ARG_VALUE, propertyAdapter.propsValues.get(position));
+                arguments.putInt(JavaMailPropertyDialog.ARG_MODE, JavaMailPropertyDialog.MODE_EDIT);
+                arguments.putInt(JavaMailPropertyDialog.ARG_IX, position);
+                arguments.putString(JavaMailPropertyDialog.ARG_KEY, propertyAdapter.propsKeys.get(position));
+                arguments.putString(JavaMailPropertyDialog.ARG_VALUE, propertyAdapter.propsValues.get(position));
                 propertyDialog.setArguments(arguments);
-                propertyDialog.show(getSupportFragmentManager(), JavaxMailPropertyDialog.DIALOG_TAG);
+                propertyDialog.show(getSupportFragmentManager(), JavaMailPropertyDialog.DIALOG_TAG);
             }
         }));
     }
 
     @Override
     public void doneEditing(Bundle args) {
-        int index = args.getInt(JavaxMailPropertyDialog.ARG_IX, -1);
-        String newKey = args.getString(JavaxMailPropertyDialog.ARG_KEY, "");
-        String newValue = args.getString(JavaxMailPropertyDialog.ARG_VALUE, "");
+        int index = args.getInt(JavaMailPropertyDialog.ARG_IX, -1);
+        String newKey = args.getString(JavaMailPropertyDialog.ARG_KEY, "");
+        String newValue = args.getString(JavaMailPropertyDialog.ARG_VALUE, "");
         if (index == -1){
             propertyAdapter.addPair(newKey, newValue);
+            propertyRecycler.smoothScrollToPosition(propertyAdapter.getItemCount()-1);
         }else{
             propertyAdapter.editPair(index, newKey, newValue);
+            propertyRecycler.smoothScrollToPosition(index);
         }
     }
 
     @Override
-    public void deleteProperty(int which) {
-        propertyAdapter.deletePair(which);
+    public void deleteProperty(int index) {
+        propertyAdapter.deletePair(index);
     }
 
     private void updatePrefsWithKeysAndValues(SharedPreferences settings, ArrayList<String> keys, ArrayList<String> values) {
         SharedPreferences.Editor editor = settings.edit();
         int count = keys.size();
         for (int i = 0; i < count; i++) {
-            editor.putString(SetupActivity.SHAREDPREFSJAVAXKEY, keys.get(i));
-            editor.putString(SetupActivity.SHAREDPREFSJAVAXVALUE, values.get(i));
+            editor.putString(SetupActivity.SHAREDPREFSJAVAMAILKEY, keys.get(i));
+            editor.putString(SetupActivity.SHAREDPREFSJAVAMAILVALUE, values.get(i));
         }
-        editor.putInt(SetupActivity.SHAREDPREFSJAVAXCOUNT, count);
+        editor.putInt(SetupActivity.SHAREDPREFSJAVAMAILCOUNT, count);
         editor.apply();
     }
 
@@ -147,7 +138,7 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             LinearLayout item = (LinearLayout) LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_javax_mail_properties, parent, false);
+                    .inflate(R.layout.item_javamail_properties, parent, false);
             return new PropsViewHolder(item);
         }
 
@@ -174,7 +165,8 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
         }
 
         public void addPair(String key, String value){
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), R.string.snackbar_property_added, Snackbar.LENGTH_INDEFINITE)
+            String text = resources.getString(R.string.snackbar_property_added, key);
+            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert, new RevertAddingPropListener(propsKeys.size()))
                     .show();
             propsKeys.add(key);
@@ -184,7 +176,8 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
         }
 
         public void editPair(int index, String key, String value){
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), R.string.snackbar_property_edited, Snackbar.LENGTH_INDEFINITE)
+            String text = resources.getString(R.string.snackbar_property_edited, key);
+            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert,
                             new RevertEditingPropListener(propsKeys.get(index), propsValues.get(index), index))
                     .show();
@@ -195,7 +188,8 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
         }
 
         public void deletePair(int index) {
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), R.string.snackbar_property_removed, Snackbar.LENGTH_INDEFINITE)
+            String text = resources.getString(R.string.snackbar_property_removed, propsKeys.get(index));
+            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert,
                             new RevertDeletingPropListener(propsKeys.get(index), propsValues.get(index), index))
                     .show();
@@ -239,6 +233,7 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
                 propsValues.set(index, value);
                 notifyItemChanged(index);
                 updatePrefsWithKeysAndValues(prefs, propsKeys, propsValues);
+                propertyRecycler.smoothScrollToPosition(index);
             }
         }
 
@@ -259,6 +254,7 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
                 propsValues.add(index, value);
                 notifyItemInserted(index);
                 updatePrefsWithKeysAndValues(prefs, propsKeys, propsValues);
+                propertyRecycler.smoothScrollToPosition(index);
             }
         }
 
@@ -277,6 +273,7 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
                 propsValues = oldValues;
                 notifyDataSetChanged();
                 updatePrefsWithKeysAndValues(prefs, propsKeys, propsValues);
+                propertyRecycler.smoothScrollToPosition(0);
             }
         }
     }
@@ -284,7 +281,7 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_javax_mail_properties, menu);
+        getMenuInflater().inflate(R.menu.menu_javamail_properties, menu);
         MenuItem resetItem = menu.findItem(R.id.action_reset_props);
         Drawable icon = ResourcesCompat.getDrawable(this, R.drawable.revert);
         resetItem.setIcon(icon);
@@ -314,9 +311,9 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
     }
 
     private void populatePropsLists(ArrayList<String> keys, ArrayList<String> values, SharedPreferences preferences){
-        for (int i = 0; i < preferences.getInt(SetupActivity.SHAREDPREFSJAVAXCOUNT, 0); i++){
-            keys.add(preferences.getString(SetupActivity.SHAREDPREFSJAVAXKEY+String.valueOf(i), ""));
-            values.add(preferences.getString(SetupActivity.SHAREDPREFSJAVAXVALUE+String.valueOf(i), ""));
+        for (int i = 0; i < preferences.getInt(SetupActivity.SHAREDPREFSJAVAMAILCOUNT, 0); i++){
+            keys.add(preferences.getString(SetupActivity.SHAREDPREFSJAVAMAILKEY +String.valueOf(i), ""));
+            values.add(preferences.getString(SetupActivity.SHAREDPREFSJAVAMAILVALUE +String.valueOf(i), ""));
         }
     }
 
@@ -324,28 +321,28 @@ public class JavaxMailProperties extends AppCompatActivity implements JavaxMailP
 
         @Override
         public void onClick(View v) {
-            DialogFragment propertyDialog = new JavaxMailPropertyDialog();
+            DialogFragment propertyDialog = new JavaMailPropertyDialog();
             Bundle arguments = new Bundle();
-            arguments.putInt(JavaxMailPropertyDialog.ARG_MODE, JavaxMailPropertyDialog.MODE_NEW);
+            arguments.putInt(JavaMailPropertyDialog.ARG_MODE, JavaMailPropertyDialog.MODE_NEW);
             propertyDialog.setArguments(arguments);
-            propertyDialog.show(getSupportFragmentManager(), JavaxMailPropertyDialog.DIALOG_TAG);
+            propertyDialog.show(getSupportFragmentManager(), JavaMailPropertyDialog.DIALOG_TAG);
         }
     }
 
     static public void populateDefaultPropPreferences(SharedPreferences prefs, Resources res){
-        JavaxMailProperties.populateDefaultPropPreferences(prefs,res,false);
+        JavaMailProperties.populateDefaultPropPreferences(prefs, res, false);
     }
 
     static public void populateDefaultPropPreferences(SharedPreferences prefs, Resources res, boolean force){
-        if (force || prefs.getInt(SetupActivity.SHAREDPREFSJAVAXCOUNT, 0) == 0) {
+        if (force || prefs.getInt(SetupActivity.SHAREDPREFSJAVAMAILCOUNT, 0) == 0) {
             SharedPreferences.Editor editor = prefs.edit();
-            String[] defaultPropsKeys = res.getStringArray(R.array.javax_default_property_keys);
-            String[] defaultPropsValues = res.getStringArray(R.array.javax_default_property_values);
+            String[] defaultPropsKeys = res.getStringArray(R.array.javamail_default_property_keys);
+            String[] defaultPropsValues = res.getStringArray(R.array.javamail_default_property_values);
             for (int i = 0; i < defaultPropsKeys.length; i++){
-                editor.putString(SetupActivity.SHAREDPREFSJAVAXKEY+String.valueOf(i), defaultPropsKeys[i]);
-                editor.putString(SetupActivity.SHAREDPREFSJAVAXVALUE + String.valueOf(i), defaultPropsValues[i]);
+                editor.putString(SetupActivity.SHAREDPREFSJAVAMAILKEY +String.valueOf(i), defaultPropsKeys[i]);
+                editor.putString(SetupActivity.SHAREDPREFSJAVAMAILVALUE + String.valueOf(i), defaultPropsValues[i]);
             }
-            editor.putInt(SetupActivity.SHAREDPREFSJAVAXCOUNT, defaultPropsKeys.length);
+            editor.putInt(SetupActivity.SHAREDPREFSJAVAMAILCOUNT, defaultPropsKeys.length);
             editor.apply();
         }
     }

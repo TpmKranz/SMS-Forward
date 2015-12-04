@@ -23,7 +23,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.wnafee.vector.compat.ResourcesCompat;
-import com.wnafee.vector.compat.VectorDrawable;
 
 import java.security.Security;
 import java.util.ArrayList;
@@ -41,9 +40,9 @@ public class SetupActivity extends AppCompatActivity {
     protected static String SHAREDPREFSTARGET = "target";
     protected static String SHAREDPREFSPUBKEY = "pubkey";
     protected static String SHAREDPREFSJAVAX = "javax_default_property-";
-    protected static String SHAREDPREFSJAVAXVALUE = "javax_default_property-_value";
-    protected static String SHAREDPREFSJAVAXKEY = "javax_default_property-_key";
-    protected static String SHAREDPREFSJAVAXCOUNT = "javax_default_property-_count";
+    protected static String SHAREDPREFSJAVAMAILVALUE = "javax_default_property-_value";
+    protected static String SHAREDPREFSJAVAMAILKEY = "javax_default_property-_key";
+    protected static String SHAREDPREFSJAVAMAILCOUNT = "javax_default_property-_count";
     private ComponentName receiver;
     private PackageManager pm;
     private boolean enabled;
@@ -190,7 +189,7 @@ public class SetupActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_edit_props) {
-            startActivity(new Intent(this, JavaxMailProperties.class));
+            startActivity(new Intent(this, JavaMailProperties.class));
             return true;
         }
 
@@ -265,7 +264,7 @@ public class SetupActivity extends AppCompatActivity {
         intro.setSingleLine(!isSingleLine);
     }
 
-    private class ClearErrorOnInputListener implements TextWatcher{
+    public static class ClearErrorOnInputListener implements TextWatcher{
 
         TextInputLayout wrapper;
 

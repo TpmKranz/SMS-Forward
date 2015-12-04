@@ -90,7 +90,7 @@ public class EmailSenderService extends Service {
             final String target = settings.getString(SetupActivity.SHAREDPREFSTARGET, "");
 
             Properties props = new Properties();
-            JavaxMailProperties.populateDefaultPropPreferences(settings, mRes);
+            JavaMailProperties.populateDefaultPropPreferences(settings, mRes);
             populatePropertiesFromPreferences(props, settings);
             Session sesh = Session.getInstance(props, new javax.mail.Authenticator(){
                 protected javax.mail.PasswordAuthentication getPasswordAuthentication(){
@@ -119,13 +119,13 @@ public class EmailSenderService extends Service {
         }
 
         private void populatePropertiesFromPreferences(Properties properties, SharedPreferences prefs) throws IllegalStateException{
-            int count = prefs.getInt(SetupActivity.SHAREDPREFSJAVAXCOUNT, 0);
+            int count = prefs.getInt(SetupActivity.SHAREDPREFSJAVAMAILCOUNT, 0);
             if (count == 0){
                 throw new IllegalStateException("No properties stored in preferences");
             }
             for (int i = 0; i < count; i++){
-                String key = prefs.getString(SetupActivity.SHAREDPREFSJAVAXKEY + String.valueOf(i), "");
-                String value = prefs.getString(SetupActivity.SHAREDPREFSJAVAXVALUE + String.valueOf(i), "");
+                String key = prefs.getString(SetupActivity.SHAREDPREFSJAVAMAILKEY + String.valueOf(i), "");
+                String value = prefs.getString(SetupActivity.SHAREDPREFSJAVAMAILVALUE + String.valueOf(i), "");
                 switch (value){
                     case "$PORT":
                         value = prefs.getString(SetupActivity.SHAREDPREFSPORT, "");

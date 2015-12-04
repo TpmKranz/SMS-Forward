@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SMS Forward</string>
-    <string name="action_edit_props">javax.mail Properties</string>
+    <string name="action_edit_props">JavaMail Properties</string>
     <string name="hint_email">Email address*</string>
     <string name="hint_password">Password*</string>
     <string name="hint_server">SMTP Server*</string>
@@ -23,7 +23,7 @@
     <string name="invalid_something">Not a valid input</string>
     <string name="hint_intro0">Tap to expand explanation</string>
     <string name="hint_intro1">Tap to collapse explanation</string>
-    <string-array name="javax_default_property_keys">
+    <string-array name="javamail_default_property_keys">
         <item>mail.transport.protocol</item>
         <item>mail.smtp.auth</item>
         <item>mail.smtp.starttls.enable</item>
@@ -34,7 +34,7 @@
         <item>mail.smtp.socketFactory.fallback</item>
         <item>mail.smtp.quitwait</item>
     </string-array>
-    <string-array name="javax_default_property_values">
+    <string-array name="javamail_default_property_values">
         <item>smtp</item>
         <item>true</item>
         <item>true</item>
@@ -45,18 +45,19 @@
         <item>false</item>
         <item>false</item>
     </string-array>
-    <string name="title_activity_javax_mail_properties">Javax Mail Properties</string>
-    <string name="hint_javax_mail_properties_key">Key</string>
-    <string name="hint_javax_mail_properties_value">Value</string>
+    <string name="title_activity_javamail_properties">JavaMail Properties</string>
+    <string name="hint_javamail_properties_key">Key</string>
+    <string name="hint_javamail_properties_value">Value</string>
     <string name="action_reset_props">Reset properties</string>
-    <string name="title_dialog_add_javax_mail_property">Add new Javax.mail property</string>
-    <string name="positive_dialog_add_javax_mail_property">OK</string>
-    <string name="negative_dialog_add_javax_mail_property">Delete</string>
-    <string name="neutral_dialog_add_javax_mail_property">Cancel</string>
-    <string name="title_dialog_edit_javax_mail_property">Edit Javax.mail property</string>
-    <string name="snackbar_property_added">Added property</string>
+    <string name="title_dialog_add_javamail_property">Add new JavaMail property</string>
+    <string name="positive_dialog_add_javamail_property">OK</string>
+    <string name="negative_dialog_add_javamail_property">Delete</string>
+    <string name="neutral_dialog_add_javamail_property">Cancel</string>
+    <string name="title_dialog_edit_javamail_property">Edit JavaMail property</string>
     <string name="snackbar_property_revert">Revert</string>
-    <string name="snackbar_property_edited">Changed property</string>
-    <string name="snackbar_property_removed">Removed property</string>
+    <string name="snackbar_property_added">Added property \"%s\"</string>
+    <string name="snackbar_property_edited">Changed property \"%s\"</string>
+    <string name="snackbar_property_removed">Removed property \"%s\"</string>
     <string name="snackbar_property_reset">Reset properties to default</string>
+    <string name="invalid_javamail_key">Invalid JavaMail property key</string>
 </resources>

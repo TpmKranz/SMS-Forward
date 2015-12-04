@@ -39,8 +39,8 @@
         </service>
 
         <activity
-            android:name=".JavaxMailProperties"
-            android:label="@string/title_activity_javax_mail_properties"
+            android:name=".JavaMailProperties"
+            android:label="@string/title_activity_javamail_properties"
             android:parentActivityName=".SetupActivity"
             android:theme="@style/AppTheme.NoActionBar" >
             <meta-data

@@ -5,7 +5,7 @@
     android:id="@+id/javax_mail_properties_recyclerview"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_javax_mail_properties"
-    tools:context="org.tpmkranz.smsforward.JavaxMailProperties">
+    tools:showIn="@layout/activity_javamail_properties"
+    tools:context=".JavaMailProperties">
 
 </android.support.v7.widget.RecyclerView>
