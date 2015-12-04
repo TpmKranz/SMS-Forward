@@ -2,5 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".SetupActivity">
     <item android:id="@+id/action_reset_props" android:title="@string/action_reset_props"
-        android:orderInCategory="100" app:showAsAction="always" />
+        android:orderInCategory="100" app:showAsAction="ifRoom" />
+    <item android:id="@+id/action_hint_props" android:title="@string/action_hint_props"
+        android:orderInCategory="99" app:showAsAction="always" />
 </menu>

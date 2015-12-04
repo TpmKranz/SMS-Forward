@@ -4,15 +4,21 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,38 +26,48 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.wnafee.vector.compat.ResourcesCompat;
 
 import java.util.ArrayList;
 
-public class JavaMailProperties extends AppCompatActivity implements JavaMailPropertyDialog.JavaxMailPropertyDialogInterface {
+public class JavaMailProperties extends AppCompatActivity implements JavaMailPropertyDialog.JavaMailPropertyDialogInterface {
 
     private RecyclerView propertyRecycler;
-    private JavaxMailPropertyAdapter propertyAdapter;
+    private JavaMailPropertyAdapter propertyAdapter;
     private RecyclerView.LayoutManager propertyLayout;
+    private FloatingActionButton fab;
     private Resources resources;
     private SharedPreferences prefs;
+    private AlertDialog hintDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_javamail_properties);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.javax_mail_properties_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.javamail_properties_toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.javamail_properties_fab);
         fab.setOnClickListener(new AddPairOnClickListener());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        AlertDialog.Builder hintBuilder = new AlertDialog.Builder(this);
+        SpannableString message = new SpannableString(getResources().getString(R.string.message_dialog_hint_javamail_property));
+        Linkify.addLinks(message, Linkify.WEB_URLS);
+        hintDialog = hintBuilder.setPositiveButton(R.string.positive_dialog_hint_javamail_property, null)
+                .setMessage(message)
+                .setTitle(R.string.title_dialog_hint_javamail_property).create();
         resources = getResources();
         prefs = getSharedPreferences(SetupActivity.SHAREDPREFSNAME, MODE_PRIVATE);
         ArrayList<String> keys = new ArrayList<>();
         ArrayList<String> values = new ArrayList<>();
         populateDefaultPropPreferences(prefs, resources);
         populatePropsLists(keys, values, prefs);
-        propertyRecycler = (RecyclerView) findViewById(R.id.javax_mail_properties_recyclerview);
+        propertyRecycler = (RecyclerView) findViewById(R.id.javamail_properties_recyclerview);
         propertyLayout = new LinearLayoutManager(this);
         propertyRecycler.setLayoutManager(propertyLayout);
-        propertyAdapter = new JavaxMailPropertyAdapter(keys, values);
+        propertyAdapter = new JavaMailPropertyAdapter(keys, values);
         propertyRecycler.setAdapter(propertyAdapter);
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -79,6 +95,10 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
                 propertyDialog.show(getSupportFragmentManager(), JavaMailPropertyDialog.DIALOG_TAG);
             }
         }));
+        fab.setImageDrawable(ResourcesCompat.getDrawable(this, R.drawable.add));
+        Toast hintToast = Toast.makeText(this, R.string.toast_hint_javamail_property, Toast.LENGTH_LONG);
+        hintToast.setGravity(Gravity.TOP|Gravity.RIGHT,0,0);
+        hintToast.show();
     }
 
     @Override
@@ -111,12 +131,11 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
         editor.apply();
     }
 
-
-    private class JavaxMailPropertyAdapter extends RecyclerView.Adapter {
+    private class JavaMailPropertyAdapter extends RecyclerView.Adapter {
 
         public ArrayList<String> propsKeys, propsValues;
 
-        public JavaxMailPropertyAdapter(ArrayList<String> keys, ArrayList<String> values){
+        public JavaMailPropertyAdapter(ArrayList<String> keys, ArrayList<String> values){
             propsKeys = keys;
             propsValues = values;
         }
@@ -157,7 +176,7 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
         public void setKeysAndValues(ArrayList<String> keys, ArrayList<String> values){
             ArrayList<String> oldKeys = new ArrayList<>(propsKeys);
             ArrayList<String> oldValues = new ArrayList<>(propsValues);
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), R.string.snackbar_property_reset, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(R.id.javamail_properties_layout), R.string.snackbar_property_reset, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert, new RevertResettingPropsListener(oldKeys, oldValues))
                     .show();
             propsKeys = keys;
@@ -166,7 +185,7 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
 
         public void addPair(String key, String value){
             String text = resources.getString(R.string.snackbar_property_added, key);
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(R.id.javamail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert, new RevertAddingPropListener(propsKeys.size()))
                     .show();
             propsKeys.add(key);
@@ -177,7 +196,7 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
 
         public void editPair(int index, String key, String value){
             String text = resources.getString(R.string.snackbar_property_edited, key);
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(R.id.javamail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert,
                             new RevertEditingPropListener(propsKeys.get(index), propsValues.get(index), index))
                     .show();
@@ -189,7 +208,7 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
 
         public void deletePair(int index) {
             String text = resources.getString(R.string.snackbar_property_removed, propsKeys.get(index));
-            Snackbar.make(findViewById(R.id.javax_mail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(R.id.javamail_properties_layout), text, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.snackbar_property_revert,
                             new RevertDeletingPropListener(propsKeys.get(index), propsValues.get(index), index))
                     .show();
@@ -282,9 +301,8 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_javamail_properties, menu);
-        MenuItem resetItem = menu.findItem(R.id.action_reset_props);
-        Drawable icon = ResourcesCompat.getDrawable(this, R.drawable.revert);
-        resetItem.setIcon(icon);
+        menu.findItem(R.id.action_reset_props).setIcon(ResourcesCompat.getDrawable(this, R.drawable.revert));
+        menu.findItem(R.id.action_hint_props).setIcon(ResourcesCompat.getDrawable(this, R.drawable.info));
         return true;
     }
 
@@ -305,9 +323,16 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
             propertyAdapter.setKeysAndValues(keys, values);
             propertyAdapter.notifyDataSetChanged();
             return true;
+        }else if (id == R.id.action_hint_props){
+            showHint();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showHint(){
+        hintDialog.show();
+        ((TextView) hintDialog.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void populatePropsLists(ArrayList<String> keys, ArrayList<String> values, SharedPreferences preferences){

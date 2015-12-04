@@ -60,4 +60,10 @@
     <string name="snackbar_property_removed">Removed property \"%s\"</string>
     <string name="snackbar_property_reset">Reset properties to default</string>
     <string name="invalid_javamail_key">Invalid JavaMail property key</string>
+    <string name="invalid_javamail_value">Empty property value</string>
+    <string name="positive_dialog_hint_javamail_property">Got it!</string>
+    <string name="message_dialog_hint_javamail_property">Here you can edit the set of Properties that will be passed to the JavaMail instance used for sending emails.\nTap a key-value pair to make changes, swipe one to remove it or add one by tapping the + button.\nYou can access the following settings from the main setup as values: $EMAIL (account email address), $SERVER (host name), $PORT (SMTP port), $TARGET (target email address).\nRead more about the key-value-pairs used here at https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html</string>
+    <string name="title_dialog_hint_javamail_property">What are you doing here?</string>
+    <string name="action_hint_props">Info</string>
+    <string name="toast_hint_javamail_property">HERE BE DRAGONS! Please tap the info button to get an idea of what you\'re supposed to do here.</string>
 </resources>

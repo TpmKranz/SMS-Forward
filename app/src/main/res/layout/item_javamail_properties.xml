@@ -7,7 +7,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_javax_mail_properties_key">
+        android:hint="@string/hint_javamail_properties_key">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -22,7 +22,7 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/hint_javax_mail_properties_value">
+        android:hint="@string/hint_javamail_properties_value">
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

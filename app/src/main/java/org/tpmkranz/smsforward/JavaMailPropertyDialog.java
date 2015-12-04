@@ -24,7 +24,7 @@ public class JavaMailPropertyDialog extends DialogFragment {
     private String propertyKey = "", propertyValue = "";
     private EditText keyInput, valueInput;
     private LinearLayout dialogView;
-    private JavaxMailPropertyDialogInterface dialogInterface;
+    private JavaMailPropertyDialogInterface dialogInterface;
     private AlertDialog thisDialog;
 
     @Override
@@ -60,6 +60,7 @@ public class JavaMailPropertyDialog extends DialogFragment {
         keyInput.addTextChangedListener(new SetupActivity.ClearErrorOnInputListener(keyInput));
         valueInput = (EditText) dialogView.findViewById(R.id.dialog_value_input);
         valueInput.setText(propertyValue);
+        valueInput.addTextChangedListener(new SetupActivity.ClearErrorOnInputListener(valueInput));
     }
 
     @Override
@@ -74,7 +75,7 @@ public class JavaMailPropertyDialog extends DialogFragment {
     public void onAttach(Activity activity){
         super.onAttach(activity);
         try {
-            dialogInterface = (JavaxMailPropertyDialogInterface) activity;
+            dialogInterface = (JavaMailPropertyDialogInterface) activity;
         } catch (ClassCastException e){
             dialogInterface = null;
         }
@@ -93,15 +94,19 @@ public class JavaMailPropertyDialog extends DialogFragment {
         public void onClick(View v) {
             if (dialogInterface != null){
                 if (button == DialogInterface.BUTTON_POSITIVE) {
-                    if (!keyInput.getText().toString().contains(".")){
+                    if (!keyInput.getText().toString().contains(".") || keyInput.getText().toString().endsWith(".")){
                         ((TextInputLayout)keyInput.getParent()).setError(
                                 v.getContext().getResources().getString(R.string.invalid_javamail_key));
+                    }else if (valueInput.getText().toString().isEmpty()){
+                        ((TextInputLayout)valueInput.getParent()).setError(
+                                v.getContext().getResources().getString(R.string.invalid_javamail_value));
                     }else {
                         Bundle arguments = new Bundle();
                         arguments.putString(ARG_KEY, keyInput.getText().toString());
                         arguments.putString(ARG_VALUE, valueInput.getText().toString());
                         arguments.putInt(ARG_IX, propertyIndex);
                         dialogInterface.doneEditing(arguments);
+                        dialog.dismiss();
                     }
                 }else if (button == DialogInterface.BUTTON_NEUTRAL) {
                     dialogInterface.deleteProperty(propertyIndex);
@@ -111,7 +116,7 @@ public class JavaMailPropertyDialog extends DialogFragment {
         }
     }
 
-    public interface JavaxMailPropertyDialogInterface {
+    public interface JavaMailPropertyDialogInterface {
         void doneEditing(Bundle args);
         void deleteProperty(int which);
     }

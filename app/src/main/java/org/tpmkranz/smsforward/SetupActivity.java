@@ -39,10 +39,10 @@ public class SetupActivity extends AppCompatActivity {
     protected static String SHAREDPREFSPORT = "port";
     protected static String SHAREDPREFSTARGET = "target";
     protected static String SHAREDPREFSPUBKEY = "pubkey";
-    protected static String SHAREDPREFSJAVAX = "javax_default_property-";
-    protected static String SHAREDPREFSJAVAMAILVALUE = "javax_default_property-_value";
-    protected static String SHAREDPREFSJAVAMAILKEY = "javax_default_property-_key";
-    protected static String SHAREDPREFSJAVAMAILCOUNT = "javax_default_property-_count";
+    protected static String SHAREDPREFSJAVAMAIL = "javamail_default_property-";
+    protected static String SHAREDPREFSJAVAMAILVALUE = "javamail_default_property-_value";
+    protected static String SHAREDPREFSJAVAMAILKEY = "javamail_default_property-_key";
+    protected static String SHAREDPREFSJAVAMAILCOUNT = "javamail_default_property-_count";
     private ComponentName receiver;
     private PackageManager pm;
     private boolean enabled;
@@ -63,7 +63,7 @@ public class SetupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setup);
         Toolbar toolbar = (Toolbar) findViewById(R.id.setup_toolbar);
         setSupportActionBar(toolbar);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.setup_fab);
         inputEmail = (EditText) findViewById(R.id.input_email);
         inputPassword = (EditText) findViewById(R.id.input_password);
         inputServer = (EditText) findViewById(R.id.input_server);
