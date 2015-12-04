@@ -22,6 +22,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.wnafee.vector.compat.ResourcesCompat;
+import com.wnafee.vector.compat.VectorDrawable;
+
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +40,10 @@ public class SetupActivity extends AppCompatActivity {
     protected static String SHAREDPREFSPORT = "port";
     protected static String SHAREDPREFSTARGET = "target";
     protected static String SHAREDPREFSPUBKEY = "pubkey";
+    protected static String SHAREDPREFSJAVAX = "javax_default_property-";
+    protected static String SHAREDPREFSJAVAXVALUE = "javax_default_property-_value";
+    protected static String SHAREDPREFSJAVAXKEY = "javax_default_property-_key";
+    protected static String SHAREDPREFSJAVAXCOUNT = "javax_default_property-_count";
     private ComponentName receiver;
     private PackageManager pm;
     private boolean enabled;
@@ -55,7 +62,7 @@ public class SetupActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.setup_toolbar);
         setSupportActionBar(toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         inputEmail = (EditText) findViewById(R.id.input_email);
@@ -153,7 +160,7 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void switchUIStates(boolean state){
-        Drawable fabImage = getResources().getDrawable(state ? R.drawable.pause : R.drawable.play);
+        Drawable fabImage = ResourcesCompat.getDrawable(this, state ? R.drawable.pause : R.drawable.play);
         fab.setImageDrawable(fabImage);
         inputEmail.setEnabled(!state);
         inputPassword.setEnabled(!state);
@@ -182,7 +189,8 @@ public class SetupActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_edit_props) {
+            startActivity(new Intent(this, JavaxMailProperties.class));
             return true;
         }
 

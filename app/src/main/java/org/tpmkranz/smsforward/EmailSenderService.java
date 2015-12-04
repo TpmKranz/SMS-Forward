@@ -6,6 +6,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
@@ -22,6 +23,7 @@ import javax.mail.internet.MimeMessage;
 public class EmailSenderService extends Service {
     NotificationManager mManager;
     Service mContext;
+    Resources mRes;
     SharedPreferences settings;
     int mNotificationOffset;
     protected static String LOGCATTAG = "EmailSenderService";
@@ -35,6 +37,7 @@ public class EmailSenderService extends Service {
     public void onCreate(){
         super.onCreate();
         mContext = this;
+        mRes = getResources();
         mManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         settings = getSharedPreferences(SetupActivity.SHAREDPREFSNAME, Context.MODE_PRIVATE);
     }
@@ -87,15 +90,8 @@ public class EmailSenderService extends Service {
             final String target = settings.getString(SetupActivity.SHAREDPREFSTARGET, "");
 
             Properties props = new Properties();
-            props.setProperty("mail.transport.protocol", "smtp");
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
-            props.put("mail.smtp.socketFactory.port", settings.getString(SetupActivity.SHAREDPREFSPORT, ""));
-            props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-            props.put("mail.smtp.host", settings.getString(SetupActivity.SHAREDPREFSSERVER, ""));
-            props.put("mail.smtp.port", settings.getString(SetupActivity.SHAREDPREFSPORT, ""));
-            props.put("mail.smtp.socketFactory.fallback", "false");
-            props.setProperty("mail.smtp.quitwait", "false");
+            JavaxMailProperties.populateDefaultPropPreferences(settings, mRes);
+            populatePropertiesFromPreferences(props, settings);
             Session sesh = Session.getInstance(props, new javax.mail.Authenticator(){
                 protected javax.mail.PasswordAuthentication getPasswordAuthentication(){
 
@@ -122,10 +118,40 @@ public class EmailSenderService extends Service {
             return true;
         }
 
+        private void populatePropertiesFromPreferences(Properties properties, SharedPreferences prefs) throws IllegalStateException{
+            int count = prefs.getInt(SetupActivity.SHAREDPREFSJAVAXCOUNT, 0);
+            if (count == 0){
+                throw new IllegalStateException("No properties stored in preferences");
+            }
+            for (int i = 0; i < count; i++){
+                String key = prefs.getString(SetupActivity.SHAREDPREFSJAVAXKEY + String.valueOf(i), "");
+                String value = prefs.getString(SetupActivity.SHAREDPREFSJAVAXVALUE + String.valueOf(i), "");
+                switch (value){
+                    case "$PORT":
+                        value = prefs.getString(SetupActivity.SHAREDPREFSPORT, "");
+                        break;
+                    case "$SERVER":
+                        value = prefs.getString(SetupActivity.SHAREDPREFSSERVER, "");
+                        break;
+                    case "$TARGET":
+                        value = prefs.getString(SetupActivity.SHAREDPREFSTARGET, "");
+                        break;
+                    case "$EMAIL":
+                        value = prefs.getString(SetupActivity.SHAREDPREFSEMAIL, "");
+                        break;
+                    default:
+                        break;
+                }
+                properties.setProperty(key, value);
+            }
+        }
+
         @Override
         protected void onPostExecute(Boolean success){
             mManager.cancel(mNotificationId);
             mContext.stopForeground(true);
         }
+
     }
+
 }
