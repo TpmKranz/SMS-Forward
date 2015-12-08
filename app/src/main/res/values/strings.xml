@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SMS Forward</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_edit_props">JavaMail Properties</string>
     <string name="hint_email">Email address*</string>
     <string name="hint_password">Password*</string>
     <string name="hint_server">SMTP Server*</string>
@@ -23,4 +23,47 @@
     <string name="invalid_something">Not a valid input</string>
     <string name="hint_intro0">Tap to expand explanation</string>
     <string name="hint_intro1">Tap to collapse explanation</string>
+    <string-array name="javamail_default_property_keys">
+        <item>mail.transport.protocol</item>
+        <item>mail.smtp.auth</item>
+        <item>mail.smtp.starttls.enable</item>
+        <item>mail.smtp.socketFactory.port</item>
+        <item>mail.smtp.socketFactory.class</item>
+        <item>mail.smtp.host</item>
+        <item>mail.smtp.port</item>
+        <item>mail.smtp.socketFactory.fallback</item>
+        <item>mail.smtp.quitwait</item>
+    </string-array>
+    <string-array name="javamail_default_property_values">
+        <item>smtp</item>
+        <item>true</item>
+        <item>true</item>
+        <item>$PORT</item>
+        <item>javax.net.ssl.SSLSocketFactory</item>
+        <item>$SERVER</item>
+        <item>$PORT</item>
+        <item>false</item>
+        <item>false</item>
+    </string-array>
+    <string name="title_activity_javamail_properties">JavaMail Properties</string>
+    <string name="hint_javamail_properties_key">Key</string>
+    <string name="hint_javamail_properties_value">Value</string>
+    <string name="action_reset_props">Reset properties</string>
+    <string name="title_dialog_add_javamail_property">Add new JavaMail property</string>
+    <string name="positive_dialog_add_javamail_property">OK</string>
+    <string name="negative_dialog_add_javamail_property">Delete</string>
+    <string name="neutral_dialog_add_javamail_property">Cancel</string>
+    <string name="title_dialog_edit_javamail_property">Edit JavaMail property</string>
+    <string name="snackbar_property_revert">Revert</string>
+    <string name="snackbar_property_added">Added property \"%s\"</string>
+    <string name="snackbar_property_edited">Changed property \"%s\"</string>
+    <string name="snackbar_property_removed">Removed property \"%s\"</string>
+    <string name="snackbar_property_reset">Reset properties to default</string>
+    <string name="invalid_javamail_key">Invalid JavaMail property key</string>
+    <string name="invalid_javamail_value">Empty property value</string>
+    <string name="positive_dialog_hint_javamail_property">Got it!</string>
+    <string name="message_dialog_hint_javamail_property">Here you can edit the set of Properties that will be passed to the JavaMail instance used for sending emails.\nTap a key-value pair to make changes, swipe one to remove it or add one by tapping the + button.\nYou can access the following settings from the main setup as values: $EMAIL (account email address), $SERVER (host name), $PORT (SMTP port), $TARGET (target email address).\nRead more about the key-value-pairs used here at https://javamail.java.net/nonav/docs/api/com/sun/mail/smtp/package-summary.html</string>
+    <string name="title_dialog_hint_javamail_property">What are you doing here?</string>
+    <string name="action_hint_props">Info</string>
+    <string name="toast_hint_javamail_property">HERE BE DRAGONS! Please tap the info button to get an idea of what you\'re supposed to do here.</string>
 </resources>
