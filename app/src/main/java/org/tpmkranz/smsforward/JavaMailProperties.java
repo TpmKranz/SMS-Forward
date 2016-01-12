@@ -124,8 +124,8 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
         SharedPreferences.Editor editor = settings.edit();
         int count = keys.size();
         for (int i = 0; i < count; i++) {
-            editor.putString(SetupActivity.SHAREDPREFSJAVAMAILKEY, keys.get(i));
-            editor.putString(SetupActivity.SHAREDPREFSJAVAMAILVALUE, values.get(i));
+            editor.putString(SetupActivity.SHAREDPREFSJAVAMAILKEY+String.valueOf(i), keys.get(i));
+            editor.putString(SetupActivity.SHAREDPREFSJAVAMAILVALUE+String.valueOf(i), values.get(i));
         }
         editor.putInt(SetupActivity.SHAREDPREFSJAVAMAILCOUNT, count);
         editor.apply();
