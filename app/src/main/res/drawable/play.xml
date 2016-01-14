@@ -10,24 +10,18 @@
     android:viewportHeight="96"
     app:vc_viewportHeight="96">
 
-    <group
-            android:translateX="3.4222139e-6"
-            app:vc_translateX="3.4222139e-6"
-            android:translateY="-976.3631"
-            app:vc_translateY="-976.3631">
-        <path
-            android:fillAlpha="0.32291667"
-            app:vc_fillAlpha="0.32291667"
-            android:strokeWidth="0.75"
-            app:vc_strokeWidth="0.75"
-            android:pathData="M 95.999993,1072.3631 l -96.0000002369112,0 0,-95.99941 96.0000002369112,0 z"
-            app:vc_pathData="M 95.999993,1072.3631 l -96.0000002369112,0 0,-95.99941 96.0000002369112,0 z" />
-        <path
-            android:fillColor="#000000"
-            app:vc_fillColor="#000000"
-            android:pathData="M 23.999664,1061.3918 l 71.999741,-37.0284 -71.999741,-37.02842 0,24.68552
-0,24.6857 0,24.6856 z"
-            app:vc_pathData="M 23.999664,1061.3918 l 71.999741,-37.0284 -71.999741,-37.02842 0,24.68552
-0,24.6857 0,24.6856 z" />
-    </group>
+    <path
+        android:fillAlpha="0.32291667"
+        app:vc_fillAlpha="0.32291667"
+        android:strokeWidth="0.75"
+        app:vc_strokeWidth="0.75"
+        android:pathData="M96,95.9969 L0,95.9969 L0,-0.0021 L96,-0.0021 Z"
+        app:vc_pathData="M96,95.9969 L0,95.9969 L0,-0.0021 L96,-0.0021 Z" />
+    <path
+        android:fillColor="#ffffff"
+        app:vc_fillColor="#ffffff"
+        android:pathData="M23.9997,85.0269 L95.9994,47.9969 L23.9997,10.9689 L23.9997,35.6569
+L23.9997,60.3469 L23.9997,85.0369 Z"
+        app:vc_pathData="M23.9997,85.0269 L95.9994,47.9969 L23.9997,10.9689 L23.9997,35.6569
+L23.9997,60.3469 L23.9997,85.0369 Z" />
 </vector>

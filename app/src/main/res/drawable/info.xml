@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,8 +11,8 @@
     app:vc_viewportHeight="96.000002">
 
     <path
-        android:fillColor="#000000"
-        app:vc_fillColor="#000000"
+        android:fillColor="#ffffff"
+        app:vc_fillColor="#ffffff"
         android:strokeWidth="1"
         app:vc_strokeWidth="1"
         android:pathData="M41.1982,23.5928 Q41.1982,22.109,41.6774,21.0437

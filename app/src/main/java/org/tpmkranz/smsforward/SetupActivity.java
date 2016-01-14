@@ -1,7 +1,10 @@
 package org.tpmkranz.smsforward;
 
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,12 +13,14 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +56,7 @@ public class SetupActivity extends AppCompatActivity {
     private SharedPreferences settings;
     private HashMap<String,String> currentSettings;
     private PGPPubkeyEncryptionUtil encrypter;
+    private float scaledDensity = 1f;
 
 
     static {
@@ -73,15 +79,11 @@ public class SetupActivity extends AppCompatActivity {
         settings = this.getSharedPreferences(SHAREDPREFSNAME, Context.MODE_PRIVATE);
         currentSettings = new HashMap<>();
         readSettings(true);
-        inputEmail.setText(currentSettings.get(SHAREDPREFSEMAIL));
         inputEmail.addTextChangedListener(new ClearErrorOnInputListener(inputEmail));
-        inputServer.setText(currentSettings.get(SHAREDPREFSSERVER));
+        inputPassword.addTextChangedListener(new ClearErrorOnInputListener(inputPassword));
         inputServer.addTextChangedListener(new ClearErrorOnInputListener(inputServer));
-        inputPort.setText(currentSettings.get(SHAREDPREFSPORT));
         inputPort.addTextChangedListener(new ClearErrorOnInputListener(inputPort));
-        inputTarget.setText(currentSettings.get(SHAREDPREFSTARGET));
         inputTarget.addTextChangedListener(new ClearErrorOnInputListener(inputTarget));
-        inputPubkey.setText(currentSettings.get(SHAREDPREFSPUBKEY));
         inputPubkey.addTextChangedListener(new ClearErrorOnInputListener(inputPubkey));
         receiver = new ComponentName(this, SMSListener.class);
         pm = getPackageManager();
@@ -91,7 +93,12 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-
+        scaledDensity = getResources().getDisplayMetrics().scaledDensity;
+        inputEmail.setText(currentSettings.get(SHAREDPREFSEMAIL));
+        inputServer.setText(currentSettings.get(SHAREDPREFSSERVER));
+        inputPort.setText(currentSettings.get(SHAREDPREFSPORT));
+        inputTarget.setText(currentSettings.get(SHAREDPREFSTARGET));
+        inputFitting(inputPubkey, currentSettings.get(SHAREDPREFSPUBKEY));
         enabled = isListenerListening(receiver);
         switchUIStates(enabled);
     }
@@ -262,6 +269,85 @@ public class SetupActivity extends AppCompatActivity {
         ((TextInputLayout) intro.getParent()).setHint(introHint);
         intro.setEllipsize(isSingleLine ? null : TextUtils.TruncateAt.END);
         intro.setSingleLine(!isSingleLine);
+    }
+
+    public void showPubkeyPasteDeleteDialog(View view){
+        (new AlertDialog.Builder(this)).setItems(R.array.pubkey_dialog_list, new PasteDeleteDialogListener()).create().show();
+    }
+
+    private class PasteDeleteDialogListener implements DialogInterface.OnClickListener{
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == 0){
+                ClipboardManager clippy = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                if (clippy.hasPrimaryClip() &&
+                        (clippy.getPrimaryClipDescription().getMimeType(0).equals(ClipDescription.MIMETYPE_TEXT_PLAIN) ||
+                                clippy.getPrimaryClipDescription().getMimeType(0).equals(ClipDescription.MIMETYPE_TEXT_HTML))) {
+                    inputFitting(inputPubkey, clippy.getPrimaryClip().getItemAt(0).getText().toString());
+                }
+            }else if (which == 1){
+                inputPubkey.setText("");
+                inputPubkey.setTextSize(TypedValue.COMPLEX_UNIT_PX, inputTarget.getTextSize());
+            }
+        }
+    }
+
+    public void inputFitting(EditText which, String input){
+        String[] pastedInputLines = input.split("\n");
+        int longestLine = 0, longestCount = 0;
+        for (int i = 0; i < pastedInputLines.length; i++){
+            if (pastedInputLines[i].length() > longestCount){
+                longestCount = pastedInputLines[i].length();
+                longestLine = i;
+            }
+        }
+        if (pastedInputLines.length != 0 && !pastedInputLines[longestLine].isEmpty()){
+            which.setText(pastedInputLines[longestLine]);
+            which.setTextSize(which.getTextSize()/scaledDensity + 1f);
+            which.post(new EnlargeTextRunnable(which, input));
+        }
+    }
+
+    private class EnlargeTextRunnable implements Runnable{
+        EditText theView;
+        String theFinalInput;
+
+        public EnlargeTextRunnable(EditText view, String finalInput){
+            theView = view;
+            theFinalInput = finalInput;
+        }
+
+        @Override
+        public void run() {
+            if (theView.getLineCount() == 1 && theView.getTextSize()/scaledDensity < 100f){
+                theView.setTextSize(theView.getTextSize()/scaledDensity+1f);
+                theView.post(new EnlargeTextRunnable(theView, theFinalInput));
+            }else{
+                theView.setTextSize(theView.getTextSize()/scaledDensity-1f);
+                theView.post(new ShrinkTextRunnable(theView, theFinalInput));
+            }
+        }
+
+        private class ShrinkTextRunnable implements Runnable{
+            EditText theView;
+            String theFinalInput;
+
+            public ShrinkTextRunnable(EditText view, String finalInput){
+                theView = view;
+                theFinalInput = finalInput;
+            }
+
+            @Override
+            public void run() {
+                if (theView.getLineCount() > 1 && theView.getTextSize()/scaledDensity > 1f){
+                    theView.setTextSize(theView.getTextSize()/scaledDensity-1f);
+                    theView.post(new ShrinkTextRunnable(theView, theFinalInput));
+                }else{
+                    theView.setText(theFinalInput);
+                }
+            }
+        }
     }
 
     public static class ClearErrorOnInputListener implements TextWatcher{

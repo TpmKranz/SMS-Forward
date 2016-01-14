@@ -97,7 +97,7 @@ public class JavaMailProperties extends AppCompatActivity implements JavaMailPro
         }));
         fab.setImageDrawable(ResourcesCompat.getDrawable(this, R.drawable.add));
         Toast hintToast = Toast.makeText(this, R.string.toast_hint_javamail_property, Toast.LENGTH_LONG);
-        hintToast.setGravity(Gravity.TOP|Gravity.RIGHT,0,0);
+        hintToast.setGravity(Gravity.TOP|Gravity.END,0,0);
         hintToast.show();
     }
 

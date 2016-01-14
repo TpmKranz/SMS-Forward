@@ -66,4 +66,8 @@
     <string name="title_dialog_hint_javamail_property">What are you doing here?</string>
     <string name="action_hint_props">Info</string>
     <string name="toast_hint_javamail_property">HERE BE DRAGONS! Please tap the info button to get an idea of what you\'re supposed to do here.</string>
+    <string-array name="pubkey_dialog_list">
+        <item>Paste public key</item>
+        <item>Clear public key</item>
+    </string-array>
 </resources>

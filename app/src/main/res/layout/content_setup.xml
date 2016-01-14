@@ -104,7 +104,13 @@
             <EditText
                 android:id="@+id/input_pubkey"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:cursorVisible="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:editable="false"
+                android:onClick="showPubkeyPasteDeleteDialog"/>
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 </ScrollView>
