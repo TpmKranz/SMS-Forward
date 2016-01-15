@@ -66,4 +66,7 @@
     <string name="title_dialog_hint_javamail_property">What are you doing here?</string>
     <string name="action_hint_props">Info</string>
     <string name="toast_hint_javamail_property">HERE BE DRAGONS! Please tap the info button to get an idea of what you\'re supposed to do here.</string>
+    <string name="button_permission">Okay</string>
+    <string name="title_permission">Missing SMS Permission</string>
+    <string name="message_permission">It seems like you haven\'t granted SMS Forward the permission to access your SMS. If you\'re seeing this pop-up repeatedly without being offered to grant a permission, you may have chosen the \"Never ask again\" option or manually revoked the permission. If so, you\'ll have to go to Android\'s App Settings, look for SMS Forward and flip the permission switch to use this app.</string>
 </resources>

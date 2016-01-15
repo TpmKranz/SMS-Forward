@@ -1,7 +1,10 @@
 package org.tpmkranz.smsforward;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -10,6 +13,9 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -50,6 +56,7 @@ public class SetupActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword, inputServer, inputPort, inputTarget, inputPubkey;
     private SharedPreferences settings;
     private HashMap<String,String> currentSettings;
+    private AlertDialog permissionDialog;
     private PGPPubkeyEncryptionUtil encrypter;
 
 
@@ -84,6 +91,11 @@ public class SetupActivity extends AppCompatActivity {
         inputPubkey.setText(currentSettings.get(SHAREDPREFSPUBKEY));
         inputPubkey.addTextChangedListener(new ClearErrorOnInputListener(inputPubkey));
         receiver = new ComponentName(this, SMSListener.class);
+        permissionDialog = (new AlertDialog.Builder(this)).setCancelable(false)
+                .setPositiveButton(R.string.button_permission,
+                        new OnGrantingPermissionSwearItListener(this))
+                .setTitle(R.string.title_permission).setMessage(R.string.message_permission)
+                .create();
         pm = getPackageManager();
     }
 
@@ -91,9 +103,22 @@ public class SetupActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-
+        int permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
+        permissionDialog.dismiss();
+        if (permissionGranted != PackageManager.PERMISSION_GRANTED){
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            permissionDialog.show();
+        }
         enabled = isListenerListening(receiver);
         switchUIStates(enabled);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] results){
+        if (requestCode == 0 && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED){
+            recreate();
+        }
     }
 
     private void readSettings(boolean fromPrefs){
@@ -262,6 +287,20 @@ public class SetupActivity extends AppCompatActivity {
         ((TextInputLayout) intro.getParent()).setHint(introHint);
         intro.setEllipsize(isSingleLine ? null : TextUtils.TruncateAt.END);
         intro.setSingleLine(!isSingleLine);
+    }
+
+    public class OnGrantingPermissionSwearItListener implements DialogInterface.OnClickListener{
+
+        Activity callingActivity;
+
+        public OnGrantingPermissionSwearItListener(Activity caller){
+            callingActivity = caller;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            ActivityCompat.requestPermissions(callingActivity, new String[]{Manifest.permission.RECEIVE_SMS}, 0);
+        }
     }
 
     public static class ClearErrorOnInputListener implements TextWatcher{
