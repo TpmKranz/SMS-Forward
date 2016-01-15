@@ -9,19 +9,17 @@
     app:vc_viewportWidth="96"
     android:viewportHeight="96"
     app:vc_viewportHeight="96">
-
-    <path
-        android:fillColor="#ffffff"
-        app:vc_fillColor="#ffffff"
-        android:strokeWidth="0.75"
-        app:vc_strokeWidth="0.75"
-        android:pathData="M0,-0.000183105 L32,-0.000183105 L32,95.9978 L0,95.9978 Z"
-        app:vc_pathData="M0,-0.000183105 L32,-0.000183105 L32,95.9978 L0,95.9978 Z" />
-    <path
-        android:fillColor="#ffffff"
-        app:vc_fillColor="#ffffff"
-        android:strokeWidth="0.75"
-        app:vc_strokeWidth="0.75"
-        android:pathData="M64,-0.000183105 L96,-0.000183105 L96,95.9978 L64,95.9978 Z"
-        app:vc_pathData="M64,-0.000183105 L96,-0.000183105 L96,95.9978 L64,95.9978 Z" />
+    <group
+        android:name="rotationGroup"
+        android:pivotX="48"
+        android:pivotY="48"
+        android:rotation="90">
+        <path
+            android:name="v"
+            android:fillColor="#ffffff"
+            app:vc_fillColor="#ffffff"
+            android:pathData="@string/pause_path"
+            app:vc_pathData="@string/pause_path" />
+        <path/>
+    </group>
 </vector>

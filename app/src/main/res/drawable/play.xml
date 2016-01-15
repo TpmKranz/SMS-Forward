@@ -3,25 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:targetApi="21"
-    android:width="95.999995dp"
+    android:width="96dp"
     android:height="96dp"
-    android:viewportWidth="95.999995"
-    app:vc_viewportWidth="95.999995"
+    android:viewportWidth="96"
+    app:vc_viewportWidth="96"
     android:viewportHeight="96"
     app:vc_viewportHeight="96">
-
-    <path
-        android:fillAlpha="0.32291667"
-        app:vc_fillAlpha="0.32291667"
-        android:strokeWidth="0.75"
-        app:vc_strokeWidth="0.75"
-        android:pathData="M96,95.9969 L0,95.9969 L0,-0.0021 L96,-0.0021 Z"
-        app:vc_pathData="M96,95.9969 L0,95.9969 L0,-0.0021 L96,-0.0021 Z" />
-    <path
-        android:fillColor="#ffffff"
-        app:vc_fillColor="#ffffff"
-        android:pathData="M23.9997,85.0269 L95.9994,47.9969 L23.9997,10.9689 L23.9997,35.6569
-L23.9997,60.3469 L23.9997,85.0369 Z"
-        app:vc_pathData="M23.9997,85.0269 L95.9994,47.9969 L23.9997,10.9689 L23.9997,35.6569
-L23.9997,60.3469 L23.9997,85.0369 Z" />
+    <group
+        android:name="rotationGroup"
+        android:pivotX="48"
+        android:pivotY="48"
+        android:rotation="0.0" >
+        <path
+            android:name="v"
+            android:fillColor="#ffffff"
+            app:vc_fillColor="#ffffff"
+            android:pathData="@string/play_path"
+            app:vc_pathData="@string/play_path" />
+    </group>
 </vector>

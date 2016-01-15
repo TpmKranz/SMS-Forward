@@ -70,4 +70,6 @@
         <item>Paste public key</item>
         <item>Clear public key</item>
     </string-array>
+    <string name="play_path">M24.0,48.0 L24.0,0.0 L84.0,42.0 L96.0,48.0 Z M24.0,48.0 L24.0,96.0 L84.0,54.0 L96.0,48.0 Z</string>
+    <string name="pause_path">M0.0,32.0 L0.0,8.0 L96.0,8.0 L96.0,32.0 Z M0.0,64.0 L0.0,88.0 L96.0,88.0 L96.0,64.0 Z</string>
 </resources>

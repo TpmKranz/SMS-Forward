@@ -3,25 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:targetApi="21"
-    android:width="96.000001dp"
-    android:height="96.000002dp"
-    android:viewportWidth="96.000001"
-    app:vc_viewportWidth="96.000001"
-    android:viewportHeight="96.000002"
-    app:vc_viewportHeight="96.000002">
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    app:vc_viewportWidth="96"
+    android:viewportHeight="96"
+    app:vc_viewportHeight="96">
 
     <path
         android:strokeColor="#ffffff"
         app:vc_strokeColor="#ffffff"
-        android:strokeWidth="24"
-        app:vc_strokeWidth="24"
-        android:pathData="M0,47.9978 L96,47.9978"
-        app:vc_pathData="M0,47.9978 L96,47.9978" />
+        android:strokeWidth="16"
+        app:vc_strokeWidth="16"
+        android:pathData="M0,48 L96,48"
+        app:vc_pathData="M0,48 L96,48" />
     <path
         android:strokeColor="#ffffff"
         app:vc_strokeColor="#ffffff"
-        android:strokeWidth="24"
-        app:vc_strokeWidth="24"
-        android:pathData="M48,-0.000183105 L48,95.9978"
-        app:vc_pathData="M48,-0.000183105 L48,95.9978" />
+        android:strokeWidth="16"
+        app:vc_strokeWidth="16"
+        android:pathData="M48,0 L48,96"
+        app:vc_pathData="M48,0 L48,96" />
 </vector>

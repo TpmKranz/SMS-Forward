@@ -27,6 +27,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.wnafee.vector.compat.AnimatedVectorDrawable;
 import com.wnafee.vector.compat.ResourcesCompat;
 
 import java.security.Security;
@@ -166,7 +167,9 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void switchUIStates(boolean state){
-        Drawable fabImage = ResourcesCompat.getDrawable(this, state ? R.drawable.pause : R.drawable.play);
+        AnimatedVectorDrawable fabImage = AnimatedVectorDrawable.getDrawable(this, R.drawable.play_to_pause);
+        if (!state)
+            fabImage.reverse();
         fab.setImageDrawable(fabImage);
         inputEmail.setEnabled(!state);
         inputPassword.setEnabled(!state);
@@ -174,6 +177,7 @@ public class SetupActivity extends AppCompatActivity {
         inputPort.setEnabled(!state);
         inputTarget.setEnabled(!state);
         inputPubkey.setEnabled(!state);
+        fabImage.start();
     }
 
     private String getInputText(EditText input){

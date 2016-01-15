@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:drawable="@drawable/play"
+    tools:targetApi="21">
+    <target
+        android:animation="@anim/play_to_pause_rot"
+        android:name="rotationGroup" />
+
+    <target
+        android:animation="@anim/play_to_pause_pa"
+        android:name="v"/>
+
+</animated-vector>
