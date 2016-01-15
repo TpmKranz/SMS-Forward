@@ -2,6 +2,8 @@ package org.tpmkranz.smsforward;
 
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
+import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,6 +15,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -56,6 +60,7 @@ public class SetupActivity extends AppCompatActivity {
     private EditText inputEmail, inputPassword, inputServer, inputPort, inputTarget, inputPubkey;
     private SharedPreferences settings;
     private HashMap<String,String> currentSettings;
+    private AlertDialog permissionDialog;
     private PGPPubkeyEncryptionUtil encrypter;
     private float scaledDensity = 1f;
 
@@ -87,6 +92,11 @@ public class SetupActivity extends AppCompatActivity {
         inputTarget.addTextChangedListener(new ClearErrorOnInputListener(inputTarget));
         inputPubkey.addTextChangedListener(new ClearErrorOnInputListener(inputPubkey));
         receiver = new ComponentName(this, SMSListener.class);
+        permissionDialog = (new AlertDialog.Builder(this)).setCancelable(false)
+                .setPositiveButton(R.string.button_permission,
+                        new OnGrantingPermissionSwearItListener(this))
+                .setTitle(R.string.title_permission).setMessage(R.string.message_permission)
+                .create();
         pm = getPackageManager();
     }
 
@@ -100,8 +110,22 @@ public class SetupActivity extends AppCompatActivity {
         inputPort.setText(currentSettings.get(SHAREDPREFSPORT));
         inputTarget.setText(currentSettings.get(SHAREDPREFSTARGET));
         inputFitting(inputPubkey, currentSettings.get(SHAREDPREFSPUBKEY));
+        int permissionGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS);
+        permissionDialog.dismiss();
+        if (permissionGranted != PackageManager.PERMISSION_GRANTED){
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            permissionDialog.show();
+        }
         enabled = isListenerListening(receiver);
         switchUIStates(enabled);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] results){
+        if (requestCode == 0 && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED){
+            recreate();
+        }
     }
 
     private void readSettings(boolean fromPrefs){
@@ -313,44 +337,58 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private class EnlargeTextRunnable implements Runnable{
+    private class EnlargeTextRunnable implements Runnable {
         EditText theView;
         String theFinalInput;
 
-        public EnlargeTextRunnable(EditText view, String finalInput){
+        public EnlargeTextRunnable(EditText view, String finalInput) {
             theView = view;
             theFinalInput = finalInput;
         }
 
         @Override
         public void run() {
-            if (theView.getLineCount() == 1 && theView.getTextSize()/scaledDensity < 100f){
-                theView.setTextSize(theView.getTextSize()/scaledDensity+1f);
+            if (theView.getLineCount() == 1 && theView.getTextSize() / scaledDensity < 100f) {
+                theView.setTextSize(theView.getTextSize() / scaledDensity + 1f);
                 theView.post(new EnlargeTextRunnable(theView, theFinalInput));
-            }else{
-                theView.setTextSize(theView.getTextSize()/scaledDensity-1f);
+            } else {
+                theView.setTextSize(theView.getTextSize() / scaledDensity - 1f);
                 theView.post(new ShrinkTextRunnable(theView, theFinalInput));
             }
         }
 
-        private class ShrinkTextRunnable implements Runnable{
+        private class ShrinkTextRunnable implements Runnable {
             EditText theView;
             String theFinalInput;
 
-            public ShrinkTextRunnable(EditText view, String finalInput){
+            public ShrinkTextRunnable(EditText view, String finalInput) {
                 theView = view;
                 theFinalInput = finalInput;
             }
 
             @Override
             public void run() {
-                if (theView.getLineCount() > 1 && theView.getTextSize()/scaledDensity > 1f){
-                    theView.setTextSize(theView.getTextSize()/scaledDensity-1f);
+                if (theView.getLineCount() > 1 && theView.getTextSize() / scaledDensity > 1f) {
+                    theView.setTextSize(theView.getTextSize() / scaledDensity - 1f);
                     theView.post(new ShrinkTextRunnable(theView, theFinalInput));
-                }else{
+                } else {
                     theView.setText(theFinalInput);
                 }
             }
+        }
+    }
+    
+    public class OnGrantingPermissionSwearItListener implements DialogInterface.OnClickListener{
+
+        Activity callingActivity;
+
+        public OnGrantingPermissionSwearItListener(Activity caller){
+            callingActivity = caller;
+        }
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            ActivityCompat.requestPermissions(callingActivity, new String[]{Manifest.permission.RECEIVE_SMS}, 0);
         }
     }
 
